@@ -12,9 +12,11 @@ const schema = yup.object().shape({
     .max(500, "Maximum 500 caractères"),
 
   note: yup
-    .string()
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
     .required("Veuillez sélectionner une note.")
-    .transform((value) => (value === "" ? undefined : Number(value)))
     .typeError("La note doit être un nombre.")
     .min(1, "La note doit être au minimum 1.")
     .max(5, "La note doit être au maximum 5."),
