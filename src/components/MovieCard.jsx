@@ -10,7 +10,7 @@ function MovieCard({ movie }) {
       <Card.Img variant="top" src={movie.poster_path} alt={movie.original_title} />
       <Card.Body>
         <Card.Title>{movie.original_title}</Card.Title>
-        <Card.Subtitle>
+        <Card.Subtitle className="text-muted small mb-2" >
             Sortie le{" "}
             {releaseDate.toLocaleDateString("fr-FR", {
                 day: "2-digit",

@@ -13,11 +13,8 @@ const schema = yup.object().shape({
 
   note: yup
     .number()
-    .transform((value, originalValue) =>
-      originalValue === "" ? undefined : value
-    )
-    .required("Veuillez sélectionner une note.")
     .typeError("La note doit être un nombre.")
+    .required("Veuillez sélectionner une note.")
     .min(1, "La note doit être au minimum 1.")
     .max(5, "La note doit être au maximum 5."),
 
@@ -38,7 +35,7 @@ function CommentForm() {
     resolver: yupResolver(schema),
     defaultValues: {
       comment: "",
-      note: "",
+      note: undefined,
       acceptConditions: false,
     },
   });
@@ -66,7 +63,9 @@ function CommentForm() {
       <Form.Group controlId="note" className="w-100">
         <Form.Label>Note</Form.Label>
         <Form.Select
-          {...register("note")}
+          {...register("note", {
+            valueAsNumber: true,
+          })}
           isInvalid={!!errors.note}
         >
           <option value="">Sélectionnez une note</option>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Spinner, Alert } from "react-bootstrap";
+import { Container, Spinner, Alert, Row, Col } from "react-bootstrap";
 import Comments from "./components/Comments";
 import CommentForm from "./components/CommentForm";
 import MovieCard from "./components/MovieCard";
@@ -12,9 +12,6 @@ function App() {
 
   useEffect(() => {
     const fetchMovie = async () => {
-      setLoading(true);
-      setError(null);
-
       try {
         const response = await fetch("https://jsonfakery.com/movies/random/1");
 
@@ -26,6 +23,7 @@ function App() {
         setMovie(data[0]);
       } catch (err) {
         setError(err.message || "Une erreur est survenue.");
+        console.error(err.message);
       } finally {
         setLoading(false);
       }
@@ -34,30 +32,35 @@ function App() {
     fetchMovie();
   }, []);
 
-  return (
-    <Container className="mt-4 d-flex flex-column justify-content-center w-50">
-      {loading && (
-        <div className="text-center">
-          <Spinner animation="border" role="status" />
-          <p className="mt-3">Chargement du film en cours...</p>
-        </div>
-      )}
+  if (loading) {
+    return (
+      <Container className="mt-4 text-center">
+        <Spinner animation="border" role="status" />
+        <p className="mt-3">Chargement du film en cours...</p>
+      </Container>
+    );
+  }
 
-      {error && (
+  if (error) {
+    return (
+      <Container className="mt-4">
         <Alert variant="danger">
           <strong>Erreur :</strong> {error}
         </Alert>
-      )}
+      </Container>
+    );
+  }
 
-      {!loading && !error && movie && (
-        <>
+  return (
+    <Container className="mt-4">
+      <Row className="justify-content-center">
+        <Col xs={12} md={6}>
           <MovieCard movie={movie} />
-
           <h3 className="mb-3">Commentaires</h3>
           <CommentForm />
           <Comments />
-        </>
-      )}
+        </Col>
+      </Row>
     </Container>
   );
 }

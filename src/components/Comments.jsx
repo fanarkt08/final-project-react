@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { deleteComment } from "../redux/commentSlice";
-import { Button, Card, Alert } from "react-bootstrap";
+import { Button, ListGroup, Alert } from "react-bootstrap";
 
 function Comments() {
   const dispatch = useDispatch();
@@ -15,23 +15,22 @@ function Comments() {
   }
 
   return (
-    <div className="d-flex flex-column my-4">
+    <ListGroup className="my-4 d-flex flex-column gap-3">
       {comments.map((comment) => (
-        <Card key={comment.id} >
-          <Card.Body>
-            <Card.Title className="fw-bold fs-6">Note : {comment.note}/5</Card.Title>
-            <Card.Text>{comment.comment}</Card.Text>
-            <Button
-              variant="danger"
-              className="float-end"
-              onClick={() => dispatch(deleteComment(comment.id))}
-            >
-              Supprimer
-            </Button>
-          </Card.Body>
-        </Card>
+        <ListGroup.Item key={comment.id} className="d-flex flex-column">
+          <div className="fw-bold small mb-1">Note : {comment.note}/5</div>
+          <div className="mb-2">{comment.comment}</div>
+          <Button
+            variant="danger"
+            size="sm"
+            className="align-self-end"
+            onClick={() => dispatch(deleteComment(comment.id))}
+          >
+            Supprimer
+          </Button>
+        </ListGroup.Item>
       ))}
-    </div>
+    </ListGroup>
   );
 }
 
