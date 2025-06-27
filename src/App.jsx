@@ -22,7 +22,7 @@ function App() {
         const data = await response.json();
         setMovie(data[0]);
       } catch (err) {
-        setError(err.message || "Une erreur est survenue.");
+        setError("Une erreur est survenue.");
         console.error(err.message);
       } finally {
         setLoading(false);

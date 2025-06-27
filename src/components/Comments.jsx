@@ -15,7 +15,7 @@ function Comments() {
   }
 
   return (
-    <ListGroup className="my-4 d-flex flex-column gap-3">
+    <ListGroup className="my-4 d-flex flex-column">
       {comments.map((comment) => (
         <ListGroup.Item key={comment.id} className="d-flex flex-column">
           <div className="fw-bold small mb-1">Note : {comment.note}/5</div>
