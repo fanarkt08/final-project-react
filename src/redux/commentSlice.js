@@ -16,7 +16,10 @@ const commentSlice = createSlice({
         },
 
         deleteComment: (state, action) => {
-            return state.filter((comment) => comment.id !== action.payload);
+            const index = state.findIndex((c) => c.id === action.payload);
+            if (index !== -1) {
+                state.splice(index, 1);
+            }
         },
     },
 });

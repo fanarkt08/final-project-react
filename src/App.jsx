@@ -1,45 +1,57 @@
 import { useEffect, useState } from "react";
-import { Container, Card } from "react-bootstrap";
+import { Container, Spinner, Alert } from "react-bootstrap";
 import Comments from "./components/Comments";
 import CommentForm from "./components/CommentForm";
+import MovieCard from "./components/MovieCard";
 import "./assets/App.scss";
-
-const getmovie = async () => {
-  const response = await fetch("https://jsonfakery.com/movies/random/1");
-  const data = await response.json();
-  return data;
-};
 
 function App() {
   const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchMovie = async () => {
-      const data = await getmovie();
-      setMovie(data[0]);
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch("https://jsonfakery.com/movies/random/1");
+
+        if (!response.ok) {
+          throw new Error(`Erreur réseau : ${response.status}`);
+        }
+
+        const data = await response.json();
+        setMovie(data[0]);
+      } catch (err) {
+        setError(err.message || "Une erreur est survenue.");
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchMovie();
   }, []);
 
   return (
-    <Container className="mt-5 d-flex flex-column justify-content-center" style={{ maxWidth: 700 }}>
-      {movie && (
+    <Container className="mt-4 d-flex flex-column justify-content-center w-50">
+      {loading && (
+        <div className="text-center">
+          <Spinner animation="border" role="status" />
+          <p className="mt-3">Chargement du film en cours...</p>
+        </div>
+      )}
+
+      {error && (
+        <Alert variant="danger">
+          <strong>Erreur :</strong> {error}
+        </Alert>
+      )}
+
+      {!loading && !error && movie && (
         <>
-          <Card className="mb-4 w-100">
-            <Card.Img
-              src={movie.poster_path}
-            />
-            <Card.Body>
-              <Card.Title>{movie.original_title}</Card.Title>
-              <Card.Text className="text-muted small">
-                Sortie le {movie.release_date.split(",")[1].trim()}
-              </Card.Text>
-              <Card.Text className>{movie.overview}</Card.Text>
-              <Card.Text className>
-                Note moyenne : {movie.vote_average} ({movie.vote_count} votes)
-              </Card.Text>
-            </Card.Body>
-          </Card>
+          <MovieCard movie={movie} />
 
           <h3 className="mb-3">Commentaires</h3>
           <CommentForm />
@@ -47,7 +59,6 @@ function App() {
         </>
       )}
     </Container>
-
   );
 }
 

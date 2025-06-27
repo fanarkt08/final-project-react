@@ -15,7 +15,7 @@ function Comments() {
   }
 
   return (
-    <div className="d-flex flex-column gap-3 my-4">
+    <div className="d-flex flex-column my-4">
       {comments.map((comment) => (
         <Card key={comment.id} >
           <Card.Body>

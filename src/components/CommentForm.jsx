@@ -13,7 +13,11 @@ const schema = yup.object().shape({
 
   note: yup
     .string()
-    .required("Veuillez sélectionner une note."),
+    .required("Veuillez sélectionner une note.")
+    .transform((value) => (value === "" ? undefined : Number(value)))
+    .typeError("La note doit être un nombre.")
+    .min(1, "La note doit être au minimum 1.")
+    .max(5, "La note doit être au maximum 5."),
 
   acceptConditions: yup
     .boolean()
@@ -30,6 +34,11 @@ function CommentForm() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      comment: "",
+      note: "",
+      acceptConditions: false,
+    },
   });
 
   const onSubmit = ({ comment, note }) => {
@@ -39,10 +48,9 @@ function CommentForm() {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className="d-flex flex-column gap-3 align-items-start">
-      <Form.Group className="w-100">
-        <Form.Label htmlFor="comment">Ajouter un commentaire</Form.Label>
+      <Form.Group controlId="comment" className="w-100">
+        <Form.Label>Ajouter un commentaire</Form.Label>
         <Form.Control
-          id="comment"
           as="textarea"
           rows={3}
           {...register("comment")}
@@ -53,10 +61,9 @@ function CommentForm() {
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="w-100">
-        <Form.Label htmlFor="note">Note</Form.Label>
+      <Form.Group controlId="note" className="w-100">
+        <Form.Label>Note</Form.Label>
         <Form.Select
-          id="note"
           {...register("note")}
           isInvalid={!!errors.note}
         >
@@ -70,27 +77,18 @@ function CommentForm() {
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="w-100">
+      <Form.Group controlId="acceptConditions" className="w-100">
         <Form.Check
           type="checkbox"
-          label={
-            <span className={errors.acceptConditions ? "text-danger small" : ""}>
-              J'accepte les conditions générales
-            </span>
-          }
+          label="J'accepte les conditions générales"
           {...register("acceptConditions")}
+          isInvalid={!!errors.acceptConditions}
+          feedback={errors.acceptConditions?.message}
+          feedbackType="invalid"
         />
-        {errors.acceptConditions && (
-          <div className="text-danger small">
-            {errors.acceptConditions.message}
-          </div>
-        )}
       </Form.Group>
 
-      <Button
-        type="submit"
-        className="primary"
-      >
+      <Button type="submit" className="primary">
         Ajouter
       </Button>
     </Form>
